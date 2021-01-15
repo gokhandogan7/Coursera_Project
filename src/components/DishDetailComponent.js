@@ -11,6 +11,7 @@ import {
   Button
 } from "reactstrap";
 import { Link } from "react-router-dom";
+import RenderComments from './RenderComments'
 
 export const formatter = (date) => {
   return formatDate(parseISO(date), "MM/dd/yyyy HH:mm");
@@ -48,24 +49,8 @@ const DishDetail = ({ selectedDish, comments }) => {
               <CardText>{selectedDish.description}</CardText>
             </Card>
           </div>
-
           <div className="col-12 col-md-5 m-1">
-            <Card>
-            <h3>Comments</h3>
-            <hr/>
-              {comments?.map((comment) => {
-                return (
-                  <div className='container' key={comment.comment.id}>
-                    <CardText>{comment?.comment}</CardText>
-                    <CardText>--{comment?.author} , {formatter(comment?.date)}</CardText> 
-                    <br />
-                  </div>
-                );
-              })}
-               <Button outline onClick={()=>{}}>
-                  <span className="fa fa-sign-in fa-lg"></span> Submit Comment
-                </Button>
-            </Card>
+           <RenderComments comments={comments}/>
           </div>
         </div>
       ) : (
