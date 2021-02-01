@@ -12,12 +12,11 @@ import {
 } from "reactstrap";
 import { Link } from "react-router-dom";
 import RenderComments from './RenderComments'
-
 export const formatter = (date) => {
   return formatDate(parseISO(date), "MM/dd/yyyy HH:mm");
 };
 
-const DishDetail = ({ selectedDish, comments }) => {
+const DishDetail = ({ selectedDish, dishId }) => {
   return (
     <div className="container">
       <div classNme="row">
@@ -50,7 +49,7 @@ const DishDetail = ({ selectedDish, comments }) => {
             </Card>
           </div>
           <div className="col-12 col-md-5 m-1">
-           <RenderComments comments={comments}/>
+           <RenderComments dishId={dishId}/>
           </div>
         </div>
       ) : (

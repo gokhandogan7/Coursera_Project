@@ -15,6 +15,8 @@ import {
 import * as Yup from "yup";
 import { Formik } from "formik";
 import { format as formatDate, parseISO } from "date-fns";
+import {addComment} from '../redux/ActionCreator'
+import {useDispatch, useSelector} from 'react-redux';
 
 export const formatter = (date) => {
   return formatDate(parseISO(date), "MM/dd/yyyy HH:mm");
@@ -28,15 +30,26 @@ const CommentSchema = Yup.object().shape({
   comment: Yup.string().required("Required"),
 });
 
-const RenderComments = ({ comments }) => {
+
+const RenderComments = ({dishId}) => {
+  const dispatch = useDispatch();
+
+  const comments = useSelector(state => state.comments)
+  console.log(comments)
   const [modal, setModal] = useState(false);
   const toggle = () => setModal(!modal);
+  
+
+const filteredComments = comments.filter(
+          (comment) => comment.dishId === +dishId
+        )
+console.log(filteredComments)
   return (
     <div>
       <Card>
         <h3>Comments</h3>
         <hr />
-        {comments?.map((comment) => {
+        {filteredComments?.map((comment) => {
           return (
             <div className="container" key={comment.comment.id}>
               <CardText>{comment?.comment}</CardText>
@@ -57,11 +70,8 @@ const RenderComments = ({ comments }) => {
           <ModalBody>
             <Formik
               initialValues={{ rating: 4, yourname: "", comment: "" }}
-              onSubmit={(values, { setSubmitting }) => {
-                setTimeout(() => {
-                  alert(JSON.stringify(values, null, 2));
-                  setSubmitting(false);
-                }, 400);
+              onSubmit={(values) => {
+              dispatch(addComment(+dishId, values.rating, values.yourname, values.comment))  
               }}
               validationSchema={CommentSchema}
             >

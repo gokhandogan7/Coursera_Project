@@ -3,17 +3,16 @@ import Home from "./HomeComponent";
 import Menu from "./MenuComponent";
 import DishDetail from "./DishDetailComponent";
 import Header from "./HeaderComponent";
-import About from "./AboutComponent"
+import About from "./AboutComponent";
 import Footer from "./FooterComponent";
 import ContactComponent from "./ContactComponent";
-import { Switch, Route, Redirect, withRouter } from "react-router-dom";
-import {useSelector} from 'react-redux';
-
+import { Switch, Route, Redirect} from "react-router-dom";
+import { useSelector } from "react-redux";
 
 function Main() {
-
-  const {dishes,promotions,leaders,comments}= useSelector(state => state)
-  
+  const { dishes, promotions, leaders, comments } = useSelector(
+    (state) => state
+  );
 
   const HomePage = () => {
     return (
@@ -33,11 +32,10 @@ function Main() {
             (dish) => dish.id === parseInt(match.params.dishId, 10)
           )[0]
         }
-        comments={comments.filter((comment)=> comment.dishId===parseInt(match.params.dishId, 10))}
+        dishId={match?.params?.dishId}
       />
     );
   };
-
 
   return (
     <div>
