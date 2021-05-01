@@ -1,27 +1,26 @@
-import { createStore, combineReducers } from "redux";
-import { Dishes } from "./dishes";
-import { Leaders } from "./leaders";
-import { Promotions } from "./promotions";
-import { Comments } from "./comments";
+import {createStore,combineReducers,applyMiddleware} from "redux";
 
-export const ConfigureStore = () => {
-  const store = createStore(
-    combineReducers({
-      dishes: Dishes,
-      promotions: Promotions,
-      leaders: Leaders,
-      comments: Comments,
-    })
-  );
-  return store;
-};
+import {dishes} from "./dishes"
+import {promotions} from "./promotions"
+import {leaders} from "./leaders"
+import {comments} from "./comments"
+import thunk from "redux-thunk"
+import logger from "redux-logger"
 
 
-/* import { createStore } from "redux";
-import { Reducer, initialState } from "./reducer";
 
-export const ConfigureStore = () => {
-  const store = createStore(Reducer, initialState);
-  return store;
-};
- */
+export const configureStore=()=>{
+    const store=createStore(
+
+        combineReducers({
+            comments,
+            leaders,
+            promotions,
+            dishes
+
+        }),
+        applyMiddleware(thunk,logger)
+    )
+
+    return store
+}

@@ -1,142 +1,106 @@
-import React, { useState } from "react";
+import React,{useState} from 'react'
 import {
-  Button,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  Input,
-  Label,
-  Form,
-  FormGroup,
-  FormFeedback,
-  Card,
-  CardText,
-} from "reactstrap";
+    Card, CardText,
+    CardTitle, Button,Modal,ModalBody,ModalHeader,Form,FormGroup,Input,FormFeedback, Label
+} from 'reactstrap';
+
+import { useFormik } from "formik";
 import * as Yup from "yup";
-import { Formik } from "formik";
-import { format as formatDate, parseISO } from "date-fns";
-import {addComment} from '../redux/ActionCreator'
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch} from "react-redux"
+import {postComment} from "../redux/ActionCreators"
 
-export const formatter = (date) => {
-  return formatDate(parseISO(date), "MM/dd/yyyy HH:mm");
-};
+export const RenderComments = ({ comments,dishId }) => {
+   
+    const [isModalOpen, setModalOpen] = useState(false)
+    const dispatch=useDispatch()
+    const commentSchema=Yup.object().shape({
+        name:Yup.string().required().min(3,"Must be greater than 2 characters").max(15,"Must be  15 characters or less"),
 
-const CommentSchema = Yup.object().shape({
-  yourname: Yup.string()
-    .min(2, "Must be greater than 3 characters!")
-    .max(15, "Must be 15 characters or less!")
-    .required("Required"),
-  comment: Yup.string().required("Required"),
-});
+    })
 
+    const formik=useFormik({
+        initialValues:{
+            rating:1,
+            name:"",
+            comment:""
+        },
+        validationSchema:commentSchema,
+        onSubmit:values=>{
+            console.log(values)
+            setModalOpen(false)
+            dispatch(postComment(dishId,+ values.rating,values.name,values.comment))
+        }
+    })
 
-const RenderComments = ({dishId}) => {
-  const dispatch = useDispatch();
+    const toggleModal = () => {
+        setModalOpen(isModalOpen => !isModalOpen)
+    }
+    return (
+        <div className="col-12 col-md-5 m-1" >
+            <Card >
+                <CardTitle>Comments</CardTitle>
+                {
+                    comments.map((comment, index) => {
+                        return (
+                            <div key={index}>
+                                <CardText style={{ textAlign: "left" }}>{comment.comment}</CardText>
+                                <CardText style={{ textAlign: "left" }}>--{comment.author}--
+                               {new Intl.DateTimeFormat("en-US", { year: "numeric", month: "short", day: "2-digit" }).format(new Date(Date.parse(comment.date)))}</CardText>
 
-  const comments = useSelector(state => state.comments)
-  console.log(comments)
-  const [modal, setModal] = useState(false);
-  const toggle = () => setModal(!modal);
-  
+                            </div>
+                        )
+                    })
+                }
+               
+            </Card>
+            <Button outline size="mg" className="mt-3" onClick={toggleModal}>
+                    <span className="fa fa-pencil"></span> Submit Comment
+            </Button>
+            <Modal isOpen={isModalOpen} toggle={toggleModal} >
+                <ModalHeader toggle={toggleModal}>Submit Comment</ModalHeader>
+                <ModalBody>
+                    <Form onSubmit={formik.handleSubmit}>
+                        <FormGroup>
+                            <Label htmlFor="rating">Rating</Label>
+                            <Input 
+                            type="select" 
+                            id="rating"
+                           
+                            {...formik.getFieldProps('rating')}
+                            >
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </Input>
+                           
+                        </FormGroup>
+                        <FormGroup>
+                            <Label htmlFor="name">Your Name</Label>
+                            <Input
+                            type="text"
+                            id="name"
+                             invalid={formik.errors.name}
 
-const filteredComments = comments.filter(
-          (comment) => comment.dishId === +dishId
-        )
-console.log(filteredComments)
-  return (
-    <div>
-      <Card>
-        <h3>Comments</h3>
-        <hr />
-        {filteredComments?.map((comment) => {
-          return (
-            <div className="container" key={comment.comment.id}>
-              <CardText>{comment?.comment}</CardText>
-              <CardText>
-                --{comment?.author} , {formatter(comment?.date)}
-              </CardText>
-              <br />
-            </div>
-          );
-        })}
-      </Card>
-      <Button outline onClick={toggle}>
-        <span className="fa fa-pencil fa-lg"></span> Submit Comment
-      </Button>
-      <div>
-        <Modal isOpen={modal} toggle={toggle}>
-          <ModalHeader toggle={toggle}>Submit Comment</ModalHeader>
-          <ModalBody>
-            <Formik
-              initialValues={{ rating: 4, yourname: "", comment: "" }}
-              onSubmit={(values) => {
-              dispatch(addComment(+dishId, values.rating, values.yourname, values.comment))  
-              }}
-              validationSchema={CommentSchema}
-            >
-              {({
-                values,
-                errors,
-                touched,
-                handleChange,
-                handleBlur,
-                handleSubmit,
-                isSubmitting,
-              }) => (
-                <Form onSubmit={handleSubmit}>
-                  <FormGroup>
-                    <Label for="exampleSelect">Rating</Label>
-                    <Input
-                      type="select"
-                      name="rating"
-                      onChange={handleChange}
-                      invalid={errors.rating}
-                      value={values.rating}
-                    >
-                      <option>1</option>
-                      <option>2</option>
-                      <option>3</option>
-                      <option>4</option>
-                      <option>5</option>
-                    </Input>
-                  </FormGroup>
-                  <FormGroup column>
-                    <Label htmlFor="yourname">Your Name</Label>
-                    <Input
-                      type="text"
-                      name="yourname"
-                      placeholder="Your Name"
-                      value={values.yourname}
-                      onChange={handleChange}
-                      invalid={errors.yourname}
-                    />
-                    <FormFeedback>{errors.yourname}</FormFeedback>
-                  </FormGroup>
-                  <FormGroup column>
-                    <Label htmlFor="message">Comment</Label>
-                    <Input
-                      type="textarea"
-                      id="comment"
-                      name="comment"
-                      rows="7"
-                      value={values.comment}
-                      onChange={handleChange}
-                      invalid={errors.comment}
-                    ></Input>
-                    <FormFeedback>{errors.comment}</FormFeedback>
-                  </FormGroup>
-                  <Button type="submit" color="primary">
-                    Submit
-                  </Button>
-                </Form>
-              )}
-            </Formik>
-          </ModalBody>
-        </Modal>
-      </div>
-    </div>
-  );
-};
-
-export default RenderComments;
+                             {...formik.getFieldProps('name')}
+                             />
+                            <FormFeedback>{formik.errors.name}</FormFeedback>
+                        </FormGroup>
+                        <FormGroup>
+                            <Label htmlFor="comment">Comment</Label>
+                            <Input
+                            id="comment"
+                            type="textarea"
+                            rows={6}
+                            {...formik.getFieldProps('comment')}
+                            />
+                            <FormFeedback></FormFeedback>
+                        </FormGroup>
+                        <Button type="submit" value="submit" color="primary" className="bg-primary">Submit</Button>
+                    </Form>
+                </ModalBody>
+            </Modal>
+        </div>
+    )
+}

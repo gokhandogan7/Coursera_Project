@@ -1,54 +1,103 @@
-import React, { useState } from "react";
-import Home from "./HomeComponent";
-import Menu from "./MenuComponent";
-import DishDetail from "./DishDetailComponent";
-import Header from "./HeaderComponent";
-import About from "./AboutComponent";
-import Footer from "./FooterComponent";
-import ContactComponent from "./ContactComponent";
-import { Switch, Route, Redirect} from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useState, useEffect } from "react"
+import { MenuComponent } from './MenuComponent';
 
-function Main() {
-  const { dishes, promotions, leaders, comments } = useSelector(
-    (state) => state
-  );
+import { HeaderComponent } from "./HeaderComponent";
+import { FooterComponent } from "./FooterComponent";
+import { Switch, Route, Redirect } from "react-router-dom";
+import { HomeComponent } from "./HomeComponent";
+import { Contact } from "./ContactComponent";
+import { DishdetailComponent } from "./DishdetailComponent"
+import About from "./AboutUs";
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
+import { useSelector, useDispatch } from "react-redux"
+import { fetchDishes, fetchComments, fetchPromos ,fetchLeaders} from "../redux/ActionCreators"
 
-  const HomePage = () => {
+
+
+function Main({location}) {
+  const { dishes, leaders, comments, promotions } = useSelector(state => state)
+/*   const res= useSelector(state => state)
+  console.log(res) */
+
+  const dispatch = useDispatch()
+
+
+  useEffect(() => {
+    dispatch(fetchDishes())
+    dispatch(fetchComments())
+    dispatch(fetchPromos())
+    dispatch(fetchLeaders())
+
+  }, [])
+
+
+
+
+
+  const HomePage = (props) => {
+   
     return (
-      <Home
-        dish={dishes.filter((dish) => dish.featured)}
-        promotion={promotions.filter((promotion) => promotion.featured)}
-        leader={leaders.filter((leader) => leader.featured)}
+      <HomeComponent
+        dish={dishes.dishes.filter(dish => dish.featured)[0]}
+        dishesLoading={dishes.isLoading}
+        errMess={dishes.errorMessage}
+        promotion={promotions.promotions.filter(promo => promo.featured)[0]}
+        promosLoading={promotions.isLoading}
+        promosErrMess={promotions.errorMessage}
+        leader={leaders.leaders.filter(lead => lead.featured)[0]}
+        leaderLoading={leaders.isLoading}
+        leaderErrMess={leaders.errorMessage}
       />
-    );
-  };
+    )
+  }
 
-  const DishWithId = ({ match }) => {
+  const DishWithId = (props) => {
+    
+    const {match}=props
     return (
-      <DishDetail
-        selectedDish={
-          dishes.filter(
-            (dish) => dish.id === parseInt(match.params.dishId, 10)
-          )[0]
-        }
-        dishId={match?.params?.dishId}
+      <DishdetailComponent
+        dishesLoading={dishes.isLoading}
+        dish={dishes.dishes.filter(dish => dish.id == parseInt(match.params.id, 10))[0]}
+        errMess={dishes.errorMessage}
+        comments={comments.comments.filter(comment => comment.dishId == parseInt(match.params.id, 10))}
+        errMess={comments.errorMessage}
       />
-    );
-  };
+    )
+  }
+
+  const AboutUs = () => {
+    return (
+      <About leaders={leaders.leaders}
+      errMess={leaders.errorMessage} 
+      leadersLoading={leaders.isLoading}
+      
+      />
+    )
+  }
 
   return (
     <div>
-      <Header />
-      <Switch>
-        <Route path="/home" component={HomePage} />
-        <Route path="/aboutus" component={() => <About leaders={leaders} />} />
-        <Route exact path="/menu" component={() => <Menu dishes={dishes} />} />
-        <Route path="/menu/:dishId" component={DishWithId} />
-        <Route exact path="/contactus" component={ContactComponent} />
-        <Redirect to="/home" />
-      </Switch>
-      <Footer />
+      <HeaderComponent />
+      <TransitionGroup>
+      <CSSTransition key={location.location.key} classNames="page" timeout={300}>
+        <Switch  location={location.location}>
+
+          <Route path="/home" component={HomePage} />
+
+          <Route exact path="/menu" component={() => <MenuComponent dishes={dishes} />} />
+
+          <Route path="/menu/:id" component={DishWithId} />
+
+          <Route exact path="/contactus" component={Contact} />
+
+          <Route exact path="/aboutus" component={AboutUs} />
+
+          <Redirect to="/home" />
+        </Switch>
+   
+        </CSSTransition>
+        </TransitionGroup>
+      <FooterComponent />
     </div>
   );
 }

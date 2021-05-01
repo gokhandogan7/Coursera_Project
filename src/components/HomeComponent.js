@@ -1,44 +1,35 @@
-import React from "react";
-import {
-  Card,
-  CardImg,
-  CardText,
-  CardBody,
-  CardTitle,
-  CardSubtitle,
-} from "reactstrap";
+import React from 'react'
+import {RenderCard} from "./RenderCard"
 
-const RenderCard = ({ item }) => {
-  return (
-    <Card>
-      <CardImg src={item[0]?.image} alt={item[0]?.name} />
-      <CardBody>
-        <CardTitle>{item?.name}</CardTitle>
-        {item[0]?.designation ? (
-          <CardSubtitle>{item[0]?.designation}</CardSubtitle>
-        ) : null}
-        <CardText>{item[0]?.description}</CardText>
-      </CardBody>
-    </Card>
-  );
-};
 
-const Home = (props) => {
-  return (
-    <div className="container">
-      <div className="row align-items-start">
-        <div className="col-12 col-md m-1">
-          <RenderCard item={props?.dish} />
-        </div>
-        <div className="col-12 col-md m-1">
-          <RenderCard item={props?.promotion} />
-        </div>
-        <div className="col-12 col-md m-1">
-          <RenderCard item={props?.leader} />
-        </div>
-      </div>
-    </div>
-  );
-};
+export const HomeComponent = (props) => {
+    
+    return (
+        <div className="container">
+            <div className="row align-items-start">
+                <div className="col-12 col-md m-1">
+                    <RenderCard 
+                    item={props.dish}
+                    isLoading={props.dishesLoading} 
+                    errMess={props.errMess} />
+                </div>
+                <div className="col-12 col-md m-1">
+                    <RenderCard 
+                    item={props.promotion}
+                    isLoading={props.promosLoading} 
+                    errMess={props.promosErrMess} 
+                    
+                    />
+                </div>
+              <div className="col-12 col-md m-1">
+                    <RenderCard 
+                    item={props.leader}
+                    isLoading={props.leaderLoading} 
+                    errMess={props.leaderErrMess} />
+                    
+                </div> 
 
-export default Home;
+            </div>
+        </div>
+    )
+}
