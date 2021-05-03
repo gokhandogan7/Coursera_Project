@@ -5,7 +5,6 @@ import {
     CardTitle,Breadcrumb,BreadcrumbItem
 } from 'reactstrap';
 
-import {baseUrl} from "../shared/baseUrl"
 
 export const MenuComponent = (props) => {
     const history=useHistory()

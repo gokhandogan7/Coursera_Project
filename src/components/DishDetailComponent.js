@@ -7,7 +7,7 @@ import { RenderDish } from './RenderDish';
 import { RenderComments } from './RenderComments';
 import { Loading } from "./LoadingComponent"
 
-export const DishdetailComponent = (props) => {
+export const DishDetailComponent = (props) => {
 
     if (props.isLoading) {
         return (

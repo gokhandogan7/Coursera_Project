@@ -1,11 +1,10 @@
 import React from 'react'
 import { Card, CardImg, CardText, CardBody, CardTitle, CardSubtitle } from "reactstrap"
 import { Loading } from './LoadingComponent'
-import {baseUrl} from "../shared/baseUrl"
 import { FadeTransform } from 'react-animation-components';
 
 export const RenderCard = ({ item, isLoading, errMess }) => {
-/* console.log(item) */
+    
     if (isLoading) {
         return (
             <Loading />

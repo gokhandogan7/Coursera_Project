@@ -6,7 +6,7 @@ import { FooterComponent } from "./FooterComponent";
 import { Switch, Route, Redirect } from "react-router-dom";
 import { HomeComponent } from "./HomeComponent";
 import { Contact } from "./ContactComponent";
-import { DishdetailComponent } from "./DishdetailComponent"
+import { DishDetailComponent } from "./DishDetailComponent"
 import About from "./AboutUs";
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { useSelector, useDispatch } from "react-redux"
@@ -55,7 +55,7 @@ function Main({location}) {
     
     const {match}=props
     return (
-      <DishdetailComponent
+      <DishDetailComponent
         dishesLoading={dishes.isLoading}
         dish={dishes.dishes.filter(dish => dish.id == parseInt(match.params.id, 10))[0]}
         errMess={dishes.errorMessage}

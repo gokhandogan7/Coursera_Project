@@ -1,7 +1,6 @@
 import { Media } from 'reactstrap';
-
 import React from 'react'
-import {baseUrl} from "../shared/baseUrl"
+
 export const RenderLeader = ({leader}) => {
     return (
         <div key={leader.id} className="col-12 mt-5">

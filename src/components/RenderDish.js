@@ -1,6 +1,5 @@
 import React from 'react'
 import { CardImg,Card, CardBody, CardTitle,CardText } from 'reactstrap'
-import {baseUrl} from "../shared/baseUrl"
 export const RenderDish = ({dish}) => {
     return (
       <div className="col-12 col-md-5 m-1">
