@@ -34,7 +34,7 @@ export const MenuComponent = (props) => {
                         <div key={dish.id} className="col-12 col-md-5 m-1">
 
                         <Card onClick={()=>history.push(`/menu/${dish.id}`)} >
-                            <CardImg width="100%" src={baseUrl+dish.image} alt={dish.name} />
+                            <CardImg width="100%" src={dish.image} alt={dish.name} />
                             <CardImgOverlay>
                                 <CardTitle tag="h5" style={{textAlign:'left'}}>{dish.name}</CardTitle>
                             </CardImgOverlay>
